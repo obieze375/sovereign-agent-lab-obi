@@ -42,6 +42,43 @@ HOW TO RUN
 
 Results saved to week1/outputs/ex1_results.json (~2 minutes runtime).
 Then fill in week1/answers/ex1_answers.py.
+
+Extra Notes:
+
+What Claude said:
+
+The Core Idea
+It gives a model a list of venues and asks it to find one that meets 3 criteria:
+
+Available tonight
+Fits ≥160 guests
+Has vegan options
+
+The correct answers are The Haymarket Vaults or The Albanach. But the interesting part isn't the answer — it's how you present the question.
+
+The 3 Format Conditions It Tests
+PLAIN — just dumps the raw text then asks the question
+The Albanach: capacity=180...
+...
+Question: Which venue...?
+XML — wraps each venue in structured tags
+xml<query>Which venue...?</query>
+<venues>
+  <venue id="1">The Albanach...</venue>
+  ...
+</venues>
+SANDWICH — XML format but repeats the question at both the top AND bottom, exploiting the fact that models pay more attention to the beginning and end of a prompt
+
+The 3 Parts
+Part A — runs all 3 formats on a clean simple dataset with the big 70B model
+Part B — adds two sneaky "near-miss" distractors designed to trick the model, specifically The Holyrood Arms which has the right capacity and vegan options but is full — a model that skims rather than checking all criteria carefully will pick this wrong answer
+Part C — only runs if Parts A and B were all correct. Switches to the smaller 8B model which is weaker, to find where formatting starts to matter
+
+What It's Trying to Prove
+The famous Stanford finding that models can actually perform worse with more information if that information is buried in the middle of a long prompt. Structure (XML, sandwich) helps the model's attention mechanism focus on the right data.
+In practical terms — how you format your prompts matters as much as what you put in them, which is directly relevant to building agents like MiroFish.
+
+
 """
 
 import json
