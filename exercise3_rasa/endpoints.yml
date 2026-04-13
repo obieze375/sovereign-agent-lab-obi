@@ -30,8 +30,7 @@ action_endpoint:
 model_groups:
   - id: nebius_llm
     models:
-      - provider: openai
-        model: meta-llama/Llama-3.3-70B-Instruct
+      - model: openai/meta-llama/Llama-3.3-70B-Instruct
         api_base: "https://api.tokenfactory.nebius.com/v1"
         api_key: ${NEBIUS_KEY}
         temperature: 0.1
@@ -40,7 +39,6 @@ model_groups:
 
   - id: nebius_embeddings
     models:
-      - provider: openai
-        model: Qwen/Qwen3-Embedding-8B
+      - model: openai/Qwen/Qwen3-Embedding-8B
         api_base: "https://api.tokenfactory.nebius.com/v1"
         api_key: ${NEBIUS_KEY}
