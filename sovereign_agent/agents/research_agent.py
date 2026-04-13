@@ -44,7 +44,6 @@ The agent picks up the new capability automatically — no other changes needed.
     ]
 """
 
-import json
 import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
@@ -65,12 +64,18 @@ load_dotenv()
 # ─── Model ────────────────────────────────────────────────────────────────────
 # Week 1: single model handles everything
 # Week 3: this gets split into llm_planner (DeepSeek R1) and llm_executor (Llama 70B)
+#
+# max_tokens is set high enough that Qwen3's <think> block doesn't get
+# truncated mid-sentence before it has a chance to emit tool calls.
+# Task A requires checking 2 venues + weather + catering + flyer in one run,
+# so the reasoning chain is long — 4096 tokens gives it room to breathe.
 
 llm = ChatOpenAI(
     base_url="https://api.tokenfactory.nebius.com/v1/",
     api_key=os.getenv("NEBIUS_KEY"),
-    model="meta-llama/Llama-3.3-70B-Instruct",
+    model="Qwen/Qwen3-32B-fast",
     temperature=0,
+    max_tokens=4096,  # prevent <think> truncation before tool calls are emitted
 )
 
 # ─── Tool registry ────────────────────────────────────────────────────────────
@@ -84,9 +89,21 @@ TOOLS = [
     generate_event_flyer,
 ]
 
-# Build the agent once at module load time.
-# Rebuilding it on every call would be wasteful.
-_agent = create_react_agent(llm, TOOLS)
+# ─── Agent ────────────────────────────────────────────────────────────────────
+# System prompt forces the model to call tools immediately rather than
+# writing long <think> reasoning blocks that get truncated before any
+# tool calls are emitted — a known issue with Qwen3 on multi-step tasks.
+
+_agent = create_react_agent(
+    llm,
+    TOOLS,
+    prompt=(
+        "You are a venue research agent. "
+        "Call tools immediately and directly — do not write long reasoning before acting. "
+        "For each sub-task in the request, call the appropriate tool right away. "
+        "Never describe what you are about to do — just do it."
+    ),
+)
 
 
 # ─── Public interface ─────────────────────────────────────────────────────────
@@ -122,22 +139,38 @@ def run_research_agent(task: str, max_turns: int = 8) -> dict:
         role    = getattr(m, "type", "unknown")
         content = m.content
 
-        # Tool-call messages have structured list content
-        if isinstance(content, list):
-            for block in content:
-                if isinstance(block, dict) and block.get("type") == "tool_use":
-                    entry = {
-                        "tool": block["name"],
-                        "args": block.get("input", {}),
-                    }
-                    tool_calls_made.append(entry)
-                    full_trace.append({"role": "tool_call", **entry})
-            continue
+        if role == "ai":
+            # Qwen3 attaches tool calls directly to the message object —
+            # this is the primary path for tool call capture
+            for tc in getattr(m, "tool_calls", []) or []:
+                entry = {
+                    "tool": tc.get("name", "unknown"),
+                    "args": tc.get("args", {}),
+                }
+                tool_calls_made.append(entry)
+                full_trace.append({"role": "tool_call", **entry})
 
-        if content:
-            full_trace.append({"role": role, "content": str(content)})
-            if role == "ai":
-                final_answer = str(content)
+            # Fallback: handle list-style content blocks for models that use
+            # tool_use or function format instead of tool_calls on the message
+            if isinstance(content, list):
+                for block in content:
+                    if isinstance(block, dict) and block.get("type") in {"tool_use", "function"}:
+                        entry = {
+                            "tool": block.get("name", "unknown"),
+                            "args": block.get("input", block.get("parameters", {})),
+                        }
+                        tool_calls_made.append(entry)
+                        full_trace.append({"role": "tool_call", **entry})
+                # NOTE: no continue here — fall through so the final AI message
+                # (which has tool_calls=[] and string content) still gets
+                # captured as final_answer
+
+            if isinstance(content, str) and content:
+                full_trace.append({"role": role, "content": content})
+                final_answer = content
+
+        elif content and isinstance(content, str):
+            full_trace.append({"role": role, "content": content})
 
     return {
         "final_answer":    final_answer,
