@@ -34,9 +34,9 @@ model_groups:
         # Prefer a faster model to reduce first-turn route latency.
         model: nebius/Qwen/Qwen3-32B-fast
         temperature: 0.0
-        # Keep generation short for deterministic command prediction.
-        max_completion_tokens: 192
-        timeout: 60
+        # Allow enough tokens for command output after reasoning text.
+        max_completion_tokens: 512
+        timeout: 90
 
   - id: nebius_embeddings
     models:
