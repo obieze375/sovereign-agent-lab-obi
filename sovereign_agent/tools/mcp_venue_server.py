@@ -96,5 +96,6 @@ def get_venue_details(pub_name: str) -> str:
 
 
 if __name__ == "__main__":
-    print(f"Edinburgh Venue MCP Server | {len(VENUES)} venues | stdio transport")
+    # IMPORTANT: MCP stdio transport reserves stdout for JSON-RPC frames only.
+    # Printing banners/logs to stdout can break client parsing.
     mcp.run()
