@@ -31,13 +31,12 @@ model_groups:
   - id: nebius_llm
     models:
       - provider: nebius
-        model: nebius/meta-llama/Llama-3.3-70B-Instruct
-        temperature: 0.1
-        # Keep response budget modest so first-turn routing doesn't hit
-        # avoidable long-generation latency.
-        max_completion_tokens: 512
-        # Network/model latency can exceed 30s on hosted endpoints.
-        timeout: 120
+        # Prefer a faster model to reduce first-turn route latency.
+        model: nebius/Qwen/Qwen3-32B-fast
+        temperature: 0.0
+        # Keep generation short for deterministic command prediction.
+        max_completion_tokens: 192
+        timeout: 60
 
   - id: nebius_embeddings
     models:
