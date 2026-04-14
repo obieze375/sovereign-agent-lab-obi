@@ -202,7 +202,7 @@ ex3-train: check-env ## Train the Rasa Pro CALM model (run once, or after changi
 	@echo "$(YELLOW)This takes about 2 minutes (embedding model download on first run).$(RESET)"
 	@echo "$(BLUE)Note: CALM trains much faster than old Rasa — no NLU examples to learn.$(RESET)"
 	@echo ""
-	cd $(RASA_DIR) && OPENAI_API_KEY="$(NEBIUS_KEY)" $(UV) run rasa train
+	cd $(RASA_DIR) && NEBIUS_API_KEY="$(NEBIUS_KEY)" $(UV) run rasa train
 	@echo ""
 	@echo "$(GREEN)✓ Model trained.$(RESET)"
 	@echo "  Now open $(GREEN)two$(RESET) terminals:"
@@ -215,7 +215,7 @@ ex3-actions: check-env ## Terminal 1 — start the action server (keep this runn
 	@echo "$(YELLOW)Keep this terminal open. Start the chat in a second terminal with:$(RESET)"
 	@echo "$(YELLOW)  make ex3-chat$(RESET)"
 	@echo ""
-	cd $(RASA_DIR) && OPENAI_API_KEY="$(NEBIUS_KEY)" $(UV) run rasa run actions
+	cd $(RASA_DIR) && NEBIUS_API_KEY="$(NEBIUS_KEY)" $(UV) run rasa run actions
 
 .PHONY: ex3-chat
 ex3-chat: check-env ## Terminal 2 — chat with the Rasa agent (run AFTER ex3-actions is running)
@@ -232,7 +232,7 @@ ex3-chat: check-env ## Terminal 2 — chat with the Rasa agent (run AFTER ex3-ac
 	@echo ""
 	@echo "$(YELLOW)Copy-paste your terminal output into week1/answers/ex3_answers.py$(RESET)"
 	@echo ""
-	cd $(RASA_DIR) && OPENAI_API_KEY="$(NEBIUS_KEY)" $(UV) run rasa shell
+	cd $(RASA_DIR) && NEBIUS_API_KEY="$(NEBIUS_KEY)" $(UV) run rasa shell
 
 .PHONY: ex3-retrain
 ex3-retrain: ex3-train ## Alias: retrain after Task B changes (same as ex3-train)

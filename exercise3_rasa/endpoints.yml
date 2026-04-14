@@ -30,15 +30,13 @@ action_endpoint:
 model_groups:
   - id: nebius_llm
     models:
-      - provider: openai
-        model: meta-llama/Llama-3.3-70B-Instruct
-        api_base: "https://api.tokenfactory.nebius.com/v1"
+      - provider: nebius
+        model: nebius/meta-llama/Llama-3.3-70B-Instruct
         temperature: 0.1
-        max_tokens: 2048
+        max_completion_tokens: 2048
         timeout: 30
 
   - id: nebius_embeddings
     models:
-      - provider: openai
-        model: Qwen/Qwen3-Embedding-8B
-        api_base: "https://api.tokenfactory.nebius.com/v1"
+      - provider: nebius
+        model: nebius/Qwen/Qwen3-Embedding-8B
