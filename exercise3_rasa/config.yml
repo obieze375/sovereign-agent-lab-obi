@@ -32,9 +32,10 @@ pipeline:
   - name: CompactLLMCommandGenerator
     llm:
       model_group: nebius_llm
-    flow_retrieval:
-      embeddings:
-        model_group: nebius_embeddings
+    # Disable embedding-based flow retrieval to avoid extra LiteLLM
+    # provider-resolution calls in constrained training environments.
+    # With only two explicit flows in data/flows.yml, command generation
+    # remains reliable without this additional retrieval layer.
     # Raise the input character limit — voice transcripts can be verbose.
     user_input:
       max_characters: 2000
