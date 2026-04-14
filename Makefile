@@ -192,7 +192,7 @@ ex2-d: ## Task D — agent graph structure (paste output into mermaid.live)
 # 🎙️ Exercise 3 — Rasa Confirmation Agent
 # ==============================================================================
 .PHONY: ex3-train
-ex3-train: ## Train the Rasa Pro CALM model (run once, or after changing .yml files)
+ex3-train: check-env ## Train the Rasa Pro CALM model (run once, or after changing .yml files)
 	@echo "$(MAGENTA)Exercise 3 — Training Rasa Pro CALM model...$(RESET)"
 	@if [ -z "$(RASA_PRO_LICENSE)" ]; then \
 		echo "$(RED)✗ RASA_PRO_LICENSE not set.$(RESET)"; \
@@ -202,7 +202,7 @@ ex3-train: ## Train the Rasa Pro CALM model (run once, or after changing .yml fi
 	@echo "$(YELLOW)This takes about 2 minutes (embedding model download on first run).$(RESET)"
 	@echo "$(BLUE)Note: CALM trains much faster than old Rasa — no NLU examples to learn.$(RESET)"
 	@echo ""
-	cd $(RASA_DIR) && $(UV) run rasa train
+	cd $(RASA_DIR) && OPENAI_API_KEY="$(NEBIUS_KEY)" $(UV) run rasa train
 	@echo ""
 	@echo "$(GREEN)✓ Model trained.$(RESET)"
 	@echo "  Now open $(GREEN)two$(RESET) terminals:"
@@ -210,15 +210,15 @@ ex3-train: ## Train the Rasa Pro CALM model (run once, or after changing .yml fi
 	@echo "    Terminal 2: $(GREEN)make ex3-chat$(RESET)"
 
 .PHONY: ex3-actions
-ex3-actions: ## Terminal 1 — start the action server (keep this running)
+ex3-actions: check-env ## Terminal 1 — start the action server (keep this running)
 	@echo "$(MAGENTA)Exercise 3 — Action Server$(RESET)"
 	@echo "$(YELLOW)Keep this terminal open. Start the chat in a second terminal with:$(RESET)"
 	@echo "$(YELLOW)  make ex3-chat$(RESET)"
 	@echo ""
-	cd $(RASA_DIR) && $(UV) run rasa run actions
+	cd $(RASA_DIR) && OPENAI_API_KEY="$(NEBIUS_KEY)" $(UV) run rasa run actions
 
 .PHONY: ex3-chat
-ex3-chat: ## Terminal 2 — chat with the Rasa agent (run AFTER ex3-actions is running)
+ex3-chat: check-env ## Terminal 2 — chat with the Rasa agent (run AFTER ex3-actions is running)
 	@echo "$(MAGENTA)Exercise 3 — Rasa Chat$(RESET)"
 	@echo "$(YELLOW)Make sure 'make ex3-actions' is running in another terminal first.$(RESET)"
 	@echo ""
@@ -232,7 +232,7 @@ ex3-chat: ## Terminal 2 — chat with the Rasa agent (run AFTER ex3-actions is r
 	@echo ""
 	@echo "$(YELLOW)Copy-paste your terminal output into week1/answers/ex3_answers.py$(RESET)"
 	@echo ""
-	cd $(RASA_DIR) && $(UV) run rasa shell
+	cd $(RASA_DIR) && OPENAI_API_KEY="$(NEBIUS_KEY)" $(UV) run rasa shell
 
 .PHONY: ex3-retrain
 ex3-retrain: ex3-train ## Alias: retrain after Task B changes (same as ex3-train)
