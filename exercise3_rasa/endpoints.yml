@@ -30,15 +30,15 @@ action_endpoint:
 model_groups:
   - id: nebius_llm
     models:
-      - provider: nebius
-        # Prefer a faster model to reduce first-turn route latency.
-        model: nebius/Qwen/Qwen3-32B-fast
-        temperature: 0.0
-        # Allow enough tokens for command output after reasoning text.
-        max_completion_tokens: 512
-        timeout: 90
+      - model: openai/meta-llama/Llama-3.3-70B-Instruct
+        api_base: "https://api.tokenfactory.nebius.com/v1"
+        api_key: ${NEBIUS_KEY}
+        temperature: 0.1
+        max_tokens: 2048
+        timeout: 30
 
   - id: nebius_embeddings
     models:
-      - provider: nebius
-        model: nebius/Qwen/Qwen3-Embedding-8B
+      - model: openai/Qwen/Qwen3-Embedding-8B
+        api_base: "https://api.tokenfactory.nebius.com/v1"
+        api_key: ${NEBIUS_KEY}
