@@ -1,0 +1,13 @@
+Excercise 1
+
+What Likely Happens in Part A
+With a strong 70B model and clean, unambiguous data, all three conditions probably return a correct answer. This is expected and the script even warns you about it:
+
+"Strong frontier models on short, clean datasets sometimes get all three conditions correct. That is not a failure of the experiment — it is data."
+
+Why Each Format Behaves Differently in Theory
+PLAIN relies entirely on the model's ability to scan raw text linearly and evaluate all three constraints simultaneously. On a short clean list this works fine, but the model has no structural anchor to return to if its attention drifts.
+XML changes the model's processing mode — wrapping each venue in numbered tags signals "this is structured data to be evaluated systematically" rather than narrative text to be read through. Research suggests models shift into a more methodical, record-by-record evaluation when they see XML structure, reducing the chance of skipping a constraint.
+SANDWICH is the most robust format because it places the question both before and after the venue list, exploiting two known attention biases — primacy (models weight early tokens heavily) and recency (models also weight the final tokens before generating a response). By hitting both biases at once, the model is essentially reminded of the task criteria twice, making it less likely to lose track of what it's filtering for after reading through all 7 venues.
+The Key Takeaway from Part A
+If all three pass, it doesn't mean format is irrelevant — it means the signal-to-noise ratio is too high for the effect to show up. The dataset is short, the constraints are clear, and the 70B model is powerful enough to brute-force all three formats correctly. Part B is specifically designed to break that by introducing near-miss distractors that make the task genuinely harder, which is where formatting differences start to matter in practice.

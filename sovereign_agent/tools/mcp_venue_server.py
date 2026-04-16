@@ -41,7 +41,7 @@ VENUES = {
     "The Haymarket Vaults": {
         "capacity": 160,
         "vegan": True,
-        "status": "available",
+        "status": "full",
         "address": "1 Dalry Road, Edinburgh",
     },
     "The Guilford Arms": {
@@ -73,7 +73,7 @@ def search_venues(min_capacity: int, requires_vegan: bool) -> str:
         for name, info in VENUES.items()
         if info["capacity"] >= min_capacity
         and (not requires_vegan or info["vegan"])
-        and info["status"] == "available"
+        and info["status"] == "full"
     ]
     return json.dumps({"matches": matches, "count": len(matches)})
 

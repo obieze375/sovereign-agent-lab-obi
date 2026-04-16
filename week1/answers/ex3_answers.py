@@ -45,7 +45,7 @@ CONVERSATION_1_TRACE = """
 PASTE YOUR rasa shell TERMINAL OUTPUT HERE
 """
 
-CONVERSATION_1_OUTCOME = "FILL_ME_IN"   # "confirmed" or "escalated"
+CONVERSATION_1_OUTCOME = "  Thank you — booking confirmed. 160 guests, 50 requiring vegan meals, £200 deposit accepted. I'll send written confirmation to the organiser shortly."   # "confirmed" or "escalated"
 
 # ── Conversation 2: Deposit too high ───────────────────────────────────────
 
@@ -59,7 +59,10 @@ CONVERSATION_2_REASON  = "FILL_ME_IN"   # the reason the agent gave for escalati
 # ── Conversation 3: Out of scope ───────────────────────────────────────────
 
 CONVERSATION_3_TRACE = """
-PASTE YOUR rasa shell TERMINAL OUTPUT HERE
+Your input ->  I need help with parking
+I'm sorry, I'm not trained to help with that.
+I can only help with confirming tonight's venue booking. For anything else, please contact the event organiser directly.
+Is there anything else I can help you with?
 """
 
 # Describe what CALM did after the out-of-scope message. Min 20 words.
